@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="L.Y. Chen">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+        
+        
+        
+            <link rel="preconnect" href="https://registry.npmmirror.com" crossorigin>
+        
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://ly-chen04.github.io/2025/08/24/obs-推流录制工具/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="2024-08-22">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OBS_推流录制工具">
+<meta property="og:url" content="https://ly-chen04.github.io/2025/08/24/OBS-%E6%8E%A8%E6%B5%81%E5%BD%95%E5%88%B6%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="OYAMAMahiro">
+<meta property="og:description" content="2024-08-22">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E5%AE%98%E7%BD%91.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E4%B8%BB%E7%95%8C%E9%9D%A2.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E6%9D%A5%E6%BA%90.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E9%AB%98%E7%BA%A7%E9%9F%B3%E9%A2%91%E5%B1%9E%E6%80%A7.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E9%AB%98%E7%BA%A7%E9%A1%B5.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E4%B8%B2%E6%B5%81%E7%95%8C%E9%9D%A2.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E5%BD%95%E5%83%8F%E8%AE%BE%E7%BD%AE.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E6%BA%90%E5%B1%9E%E6%80%A7.png">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E7%BB%9F%E8%AE%A1%E9%9D%A2%E6%9D%BF.png">
+<meta property="article:published_time" content="2025-08-23T20:36:42.137Z">
+<meta property="article:modified_time" content="2024-09-10T10:15:33.755Z">
+<meta property="article:author" content="CLY">
+<meta property="article:tag" content="赛博说明书">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E5%AE%98%E7%BD%91.png">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-F3MZ7G6DKX"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-F3MZ7G6DKX');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/favicon.jpg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.jpg">
+    <meta name="theme-color" content="#46aef7">
+    <link rel="shortcut icon" href="/images/favicon.jpg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            OBS_推流录制工具 | OYAMAMahiro
+        
+    </title>
+
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fonts/Chillax/chillax.css">
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fonts/GeistMono/geist-mono.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fonts/Geist/geist.css">
+    <!--- Font Part-->
+    
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    
+    
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;500&display=swap" rel="stylesheet">
+    
+    
+    
+        <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/anime.min.js" ></script>
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"ly-chen04.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"19px","line_height":1.5,"image_border_radius":"15px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#46aef7","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Sans SC","url":"https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"},"english":{"enable":true,"family":"Poppins","url":"https://fonts.googleapis.com/css2?family=Poppins:wght@100;500&display=swap"},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"290px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":"页面正在初始化     Initiating Webpage..."},"open_graph":true,"google_analytics":{"enable":true,"id":"G-F3MZ7G6DKX"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/light-bk.png","dark":"/images/lightcover.jpg"},"title":"<strong>与你的日常，就是奇迹。</strong>","subtitle":{"text":["一言正在加载中..."],"hitokoto":{"enable":true,"show_author":true,"api":"https://v1.hitokoto.cn"},"typing_speed":50,"backing_speed":80,"starting_delay":400,"backing_delay":1500,"loop":false,"smart_backspace":false},"text_color":{"light":"#ffffff","dark":"#D7FFFE"},"text_style":{"title_size":"3.0rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Noto Sans SC","url":"https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"reverse","links":{"github":"https://github.com/LY-CHEN04","instagram":null,"zhihu":"https://www.zhihu.com/people/eknower-53","twitter":"https://x.com/C7355608LY","email":"C7355608@Foxmail.com","fa-brands fa-steam":"https://steamcommunity.com/id/CLY7355608"},"qrs":{"weixin":"https://pb.nichi.co/post-version-blast"}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"Two Worlds","artist":"VALORANT","url":"http://music.163.com/song/media/outer/url?id=2138811507.mp3","cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.8.5","navbar":{"auto_hide":true,"color":{"left":"#ace0f9","right":"#fff1eb","transparency":35},"width":{"home":"1200px","pages":"1200px"},"links":{"Home":{"path":"/","icon":"fa-solid fa-user"},"CUSX":{"path":"https://www.cusx.edu.cn/","icon":"fa-solid fa-tent"},"Tags":{"path":"/tags/","icon":"fa-solid fa-tag"},"相册":{"path":"/masonry/","icon":"fa-solid fa-image"},"小游戏":{"path":"/games/","icon":"fa-solid fa-gamepad-modern"},"聚合搜索":{"path":"/websearch/","icon":"fa-solid fa-globe-pointer"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"EULA与隐私政策版本：V1.0.1 (Sept.) <br> <br> 数据中心：中国香港","show_on_mobile":true,"links":{"回到顶部":{"path":"/","icon":"fa-solid fa-arrow-up"},"EULA与隐私政策":{"path":"/2024/09/05/EULA与隐私政策/","icon":"fa-solid fa-shield-check"}}},"article_date_format":"auto","excerpt_length":100,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2023/3/23 12:00:00"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/brands.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/solid.min.css">
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/regular.min.css">
+    
+    
+        <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/light.min.css">
+    
+    
+    
+        <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/fontawesome/sharp-solid.min.css">
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #242424;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #151517;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Tanker', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        页面正在初始化     Initiating Webpage...
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({ loop: true })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [20, 0],
+                translateZ: 0,
+                opacity: [0, 1],
+                filter: ['blur(5px)', 'blur(0px)'],
+                easing: "easeOutExpo",
+                duration: 1200,
+                delay: (el, i) => 300 + 20 * i,
+            })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [0, -20],
+                opacity: [1, 0],
+                filter: ['blur(0px)', 'blur(5px)'],
+                easing: "easeInExpo",
+                duration: 1000,
+                delay: (el, i) => 15 * i,
+                complete: function() {
+                    hidePreloader();
+                }
+            }, '-=700');
+
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                OYAMAMahiro
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-solid fa-user fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://www.cusx.edu.cn/"
+                                        >
+                                    <i class="fa-solid fa-tent fa-fw"></i>
+                                    CUSX
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/tags/"
+                                        >
+                                    <i class="fa-solid fa-tag fa-fw"></i>
+                                    标签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/masonry/"
+                                        >
+                                    <i class="fa-solid fa-image fa-fw"></i>
+                                    相册
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/games/"
+                                        >
+                                    <i class="fa-solid fa-gamepad-modern fa-fw"></i>
+                                    小游戏
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/websearch/"
+                                        >
+                                    <i class="fa-solid fa-globe-pointer fa-fw"></i>
+                                    聚合搜索
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-solid fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://www.cusx.edu.cn/"
+                        >
+                            <span>
+                                CUSX
+                            </span>
+                            
+                                <i class="fa-solid fa-tent fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/tags/"
+                        >
+                            <span>
+                                标签
+                            </span>
+                            
+                                <i class="fa-solid fa-tag fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/masonry/"
+                        >
+                            <span>
+                                相册
+                            </span>
+                            
+                                <i class="fa-solid fa-image fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/games/"
+                        >
+                            <span>
+                                小游戏
+                            </span>
+                            
+                                <i class="fa-solid fa-gamepad-modern fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/websearch/"
+                        >
+                            <span>
+                                聚合搜索
+                            </span>
+                            
+                                <i class="fa-solid fa-globe-pointer fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/"
+                        >
+                            <span>回到顶部</span>
+                            <i class="fa-solid fa-arrow-up fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2024/09/05/EULA%E4%B8%8E%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96/"
+                        >
+                            <span>EULA与隐私政策</span>
+                            <i class="fa-solid fa-shield-check fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			
+			
+			<img src="https://obsproject.com/assets/images/features-new/multiview.png" alt="OBS_推流录制工具" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75" />
+			
+			<div class="w-full flex items-center absolute bottom-0 justify-start">
+				<h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">OBS_推流录制工具</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/avatar.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">L.Y. Chen</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2025-08-24 04:36:42</span>
+        <span class="mobile">2025-08-24 04:36:42</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-10 18:15:33</span>
+            <span class="mobile">2024-09-10 18:15:33</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E8%B5%9B%E5%8D%9A%E8%AF%B4%E6%98%8E%E4%B9%A6/">赛博说明书</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+		<div class="article-expire mt-4 mx-2 sm:mx-6 md:mx-8 note p-4 rounded-lg red icon hidden" id="expiration-container">
+			<i class="expire-icon fa-solid fa-timer mr-0.5 text-red-600 dark:text-red-400"></i>
+			<span class="expire-label text-red-600 dark:text-red-400 " id="expiration-date">这篇文章最后更新于 some 天前，内容可能已经过时。</span>
+		</div>
+
+		<script data-swup-reload-script>
+			function updateExpirationDate() {
+				try {
+					const expiredDate = new Date("Sat Mar 04 2023 00:00:00 GMT+0800 (中国标准时间)");
+					const updatedDate = new Date("Tue Sep 10 2024 18:15:33 GMT+0800");
+					const now = new Date();
+					const expirationValue = document.getElementById("expiration-date");
+					const expirationContainer = document.getElementById("expiration-container");
+					let daysAgo = Math.floor((now - updatedDate) / (1000 * 60 * 60 * 24));
+					if (expiredDate < now) {
+						expirationContainer.classList.remove("hidden");
+						// console.log(daysAgo)
+						expirationValue.innerHTML = expirationValue.innerHTML.replace("some", daysAgo);
+					}
+				} catch (e) {}
+			}
+			document.addEventListener("DOMContentLoaded", function() {
+				updateExpirationDate();
+			});
+			try {
+				swup.hooks.on("page:view", updateExpirationDate)
+			} catch (e) {}
+		</script>
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h5 id="基于OBS-28-0-的基础面板解释。"><a href="#基于OBS-28-0-的基础面板解释。" class="headerlink" title="基于OBS 28.0 的基础面板解释。"></a>基于OBS 28.0 的基础面板解释。</h5><span id="more"></span>
+<h1 id="OBS——推流录制工具"><a href="#OBS——推流录制工具" class="headerlink" title="OBS——推流录制工具"></a>OBS——推流录制工具</h1><p><strong>OBS</strong> (Open Broadcaster Software) 是一款开源、免费、跨平台的直播推流和视频录制工具，它功能强大、可调空间大、上限很高，但是因为它主要为直播而设计，录制操作的便利性较差，上手有一定难度。和一众录屏工具（包括N&#x2F;A卡驱动自带录屏）和它的套皮软件相比，OBS 属于那种 <strong>“愿意花一些时间研究能带来更高画质和效率”</strong> 的工具。</p>
+<p>本文将会基于 <code>28.0</code> 版本介绍直播推流和录制相关的设置，并以<strong>CSGO素材录制</strong>为例介绍游戏场景下的设置策略和一些 Trick，注意 OBS 实际分为 Studio 和 Classic 两个版本，Classic 版本有更好的兼容性，对较老的系统和设备有些用处，一般都用 Studio 版本。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E5%AE%98%E7%BD%91.png"
+                     
+                ></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>官网：<a class="link"   target="_blank" rel="noopener" href="https://obsproject.com/" >https://obsproject.com<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>项目：<a class="link"   target="_blank" rel="noopener" href="https://github.com/obsproject/obs-studio" >https://github.com/obsproject/obs-studio<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>论坛：<a class="link"   target="_blank" rel="noopener" href="https://obsproject.com/forum" >https://obsproject.com/forum<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>资源：<a class="link"   target="_blank" rel="noopener" href="https://obsproject.com/forum/resources" >https://obsproject.com/forum/resources<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<blockquote>
+<p>资源页包含各种插件、脚本、主题和工具。</p>
+</blockquote>
+<p>OBS Studio 已经登录 Steam 商店，同样免费。如果担心下载和更新的速度，可以直接从 Steam 下载，相对更加方便。</p>
+<h2 id="初识OBS"><a href="#初识OBS" class="headerlink" title="初识OBS"></a>初识OBS</h2><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E4%B8%BB%E7%95%8C%E9%9D%A2.png"
+                     
+                ><br>启动 OBS，忽略首次引导，主界面如图所示。可以看到界面分为以下几个部分：</p>
+<ul>
+<li>顶部菜单栏</li>
+<li>预览窗口</li>
+<li>快捷工具栏</li>
+<li>来源</li>
+<li>混音器</li>
+<li>场景</li>
+<li>转场特效</li>
+<li>控件</li>
+</ul>
+<h3 id="来源面板"><a href="#来源面板" class="headerlink" title="来源面板"></a>来源面板</h3><p>看到 <code>来源</code> 面板，我们需要添加合适的源得到想要的画面，这里的源类似 <code>PhotoShop</code> 里 <code>图层</code> 的概念，上层会覆盖下层，顺序可以随意调整，来源不可用时为透明，不会影响下一层。</p>
+<p>可以添加的来源有很多种，首先添加一个 <code>显示器采集</code> 源，一切默认，这样我们就能预览看到画面了。</p>
+<p><code>游戏源</code> 和 <code>窗口采集</code> 可以专门捕获全屏游戏或某个游戏&#x2F;窗口，捕获游戏时的性能会更好，可以把它们放在显示器源的上层，兼顾性能和便利，也可以关闭显示器源，不暴露桌面情况只展示特定游戏或窗口。</p>
+<p><code>应用程序音频捕获</code> 是当前正在测试的功能，可以获取特定程序的声音，特别适合分离游戏&#x2F;语音音源，方便后期处理，后面会详细介绍。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E6%9D%A5%E6%BA%90.png"
+                     
+                ></p>
+<h3 id="混音器面板"><a href="#混音器面板" class="headerlink" title="混音器面板"></a>混音器面板</h3><p>这里我们可以调整各个声音来源的音量和滤镜，改变它们的混合比例。打开某个音源的滤镜页，可以添加 <code>降噪、阈值</code> 等滤镜，包括电脑中已安装的VST效果，图中简单加了一个 <code>噪音抑制</code>，效果尚可。</p>
+<p>点“齿轮”按钮或右键打开<strong>高级音频属性</strong>，这里可以进一步调整音量、左右平衡、偏移和监听，和较为重要的<strong>轨道</strong>。轨道中某个数字是否勾选代表它是否在该轨道中出现，一般会在轨道1中保留主要声音&#x2F;直播观众听到的声音，其他轨道分别设置麦克风、开黑语音等音源，方便后期处理。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E9%AB%98%E7%BA%A7%E9%9F%B3%E9%A2%91%E5%B1%9E%E6%80%A7.png"
+                     
+                ></p>
+<h3 id="场景面板"><a href="#场景面板" class="headerlink" title="场景面板"></a>场景面板</h3><p>设置和调整各个场景（Scene），直播往往需要多个不同场景，如正式开播前的等候场景、游戏A、B、C的场景、聊天场景等等。提前设置好各个场景可以避免来源面板臃肿和不断开关来源的麻烦。搭配相应的工具（如StreamDeck）可以实现快速切换场景，给直播带来便利。</p>
+<p>场景之上还有一个场景集合的概念，在顶部菜单栏可以看到，可以更方便的分组、导入导出场景设置。</p>
+<h3 id="转场特效面板"><a href="#转场特效面板" class="headerlink" title="转场特效面板"></a>转场特效面板</h3><p>调整场景切换时的转场特效，默认只有渐变和裁切，即交叉溶解和硬切，通过安装转场插件可以添加更多效果。</p>
+<h3 id="预览窗口"><a href="#预览窗口" class="headerlink" title="预览窗口"></a>预览窗口</h3><p>除了实时预览效果，在预览窗口还可以全屏投影、截屏和调整源的尺寸及位置。</p>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>类似刚才提到的场景集合，每一个<strong>配置文件</strong>对应一组接下来要介绍的设置，整个设置面板的内容都包括在内（录制、推流、快捷键等），注意它和场景互不干扰，要分别设置。</p>
+<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><p>从控件面板点击按钮打开设置面板，这里按照录制设置的逻辑顺序介绍，以下每一小节对应左侧的标签栏名称。</p>
+<h2 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h2><p>在这里可以调整画布和输出的分辨率、缩小方法和录制帧率FPS。</p>
+<p>两个分辨率一般保持一致，即<strong>你想要的录制&#x2F;推流分辨率</strong>，并且此时缩小方法不会生效。基础分辨率大于输出分辨率相当于超采，理论上画面细节会更好，性能消耗也会更高。不过这里调整缩放和来源设置的缩放有些重复，除非想要1080P推流同时4K录像，一般不要动，一致即可。</p>
+<p><strong>常用 FPS 值</strong> 不超过60，想要录制更高帧率可以改成 <strong>整数 FPS 值</strong>，最高能到120，再往上可以设置<strong>分数 FPS 值</strong>，如 <code>180FPS -&gt; 180/1</code>，不过此时录制的性能一般有瓶颈。</p>
+<h2 id="高级"><a href="#高级" class="headerlink" title="高级"></a>高级</h2><p>高级页一般要注意的是 视频、录像、串流延迟这三个部分。</p>
+<p><strong>色彩格式</strong>默认的NV12适合推流，设置成其他格式则会有格式转换的性能消耗，但如果机器的性能尚可，建议设置成 <code>I420</code>。如果追求更高的画质，<code>I420</code>下色彩信息损失较多，可以考虑修改为 <code>I444</code>，但它的兼容性较差，<strong>请务必确认你所使用的软件能够正确识别和播放</strong>。</p>
+<blockquote>
+<p>想要进一步了解可以搜索 <code>色度抽样</code></p>
+</blockquote>
+<p><strong>色彩范围</strong>设置为有限会丢弃掉一些超黑超白数据。直播场景建议保持 <code>受限</code> 以规避一些问题。在录制场景下可以设置为 <code>完全</code>，<strong>注意此时部分播放器可能会出现异常</strong>。</p>
+<p><strong>录像</strong>的<strong>文件名格式</strong>中包含年月日和时间，可以根据需要修改。</p>
+<p><strong>自动封装至MP4格式</strong>再录制文件格式为MKV时会自动在录制完成后转换格式，后文中展开说明。</p>
+<p><strong>回放缓存文件名前缀&#x2F;后缀</strong> 设置回放缓存（即时重放）功能保存的视频文件名，和录制得到的文件作区分，建议前缀或者后缀改成<code>即时重放</code>。</p>
+<p><strong>串流延迟</strong>顾名思义，主要用于游戏直播防窥屏等需求。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E9%AB%98%E7%BA%A7%E9%A1%B5.png"
+                     
+                ></p>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><p>输出页包含推流、录像、音频和回放缓存（即时重放）的设置，也是OBS设置的难点。</p>
+<p><strong>输出模式</strong>建议设置成 <code>高级</code> 以获得最大的调整空间，<code>简单模式</code> 下的录像设置不是很够。如果你想要更简单一些，可以先看下去，如果你需要的选项在 <code>简单模式</code> 下就能调整好也可以不动。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E4%B8%B2%E6%B5%81%E7%95%8C%E9%9D%A2.png"
+                     
+                ></p>
+<h4 id="编码器"><a href="#编码器" class="headerlink" title="编码器"></a>编码器</h4><p>编码器是OBS设置的重点。其中 x264 是 CPU 软件编码，比较吃CPU的性能和多核性能，而显卡编码一般对性能影响较小，但是画质较差，NVIDIA显卡有 NVENC，AMD显卡有 AMF，Intel显卡有 QuickSync，Mac下也有对应的编码器。</p>
+<p>显卡编码非常适合游戏场景，我们可以把推流和录像都设置成显卡编码或者一个CPU编码、一个显卡编码平衡负载。</p>
+<h5 id="x264-编码器"><a href="#x264-编码器" class="headerlink" title="x264 编码器"></a>x264 编码器</h5><p>一般关注这三个设置</p>
+<ul>
+<li>码率控制：固定码率CBR&#x2F;可变码率VBR&#x2F;CRF<ul>
+<li>VBR 更节省码率，但画面变换时码率变换可能滞后导致码率不够，出现明显模糊</li>
+<li>CRF 模式适合录像，数值越低画质越高</li>
+</ul>
+</li>
+<li>比特率：CBR&#x2F;VBR下可用<ul>
+<li>直播建议在 4000Kbps 以上</li>
+<li>8000Kbps 附近比较适合 1080P 直播</li>
+<li>码率上限取决于网络的上行带宽，建议测试网速确保带宽足够</li>
+</ul>
+</li>
+<li>CPU使用预设：对CPU占用影响较大，掉帧时提高（使用更快）预设</li>
+</ul>
+<h5 id="NVIDIA-NVENC-H-264-编码器"><a href="#NVIDIA-NVENC-H-264-编码器" class="headerlink" title="NVIDIA NVENC H.264 编码器"></a>NVIDIA NVENC H.264 编码器</h5><blockquote>
+<p>可以尝试使用 <code>NVIDIA NVENC HEVC</code>，但要考虑到直播平台是否支持，和部分设备无法硬解时出现的卡顿情况。</p>
+</blockquote>
+<ul>
+<li>速率控制：同上码率控制</li>
+<li>最大比特率：可以在比特率的基础上加 <code>2000~5000 Kbps</code></li>
+<li>预设：直播时尽可能在带有<code>性能</code>的三个档位中选择，推荐 <code>性能</code></li>
+<li>录像：CQP 模式，数值 <code>12~23</code>；预设改为<code>质量/最高质量</code></li>
+</ul>
+<h5 id="Apple-ProRes-编码器"><a href="#Apple-ProRes-编码器" class="headerlink" title="Apple ProRes 编码器"></a>Apple ProRes 编码器</h5><p>安装 <a class="link"   target="_blank" rel="noopener" href="https://obsproject.com/forum/resources/streamfx-for-obs%C2%AE-studio.578" >StreamFX<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>插件后可用，录像时可以考虑尝试使用，适用于对画质要求高且配置、存储足够的用户，建议<strong>配置</strong>设置 <code>422标准</code> 或 <code>422高品质</code></p>
+<blockquote>
+<p>更多的编码知识和OBS编码器设置作业参见 <a class="link"   target="_blank" rel="noopener" href="https://nazorip.site/archives/63/" >iAvoe的文档<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+</blockquote>
+<h4 id="录像"><a href="#录像" class="headerlink" title="录像"></a>录像</h4><p>录像格式：即录像文件的封装格式，OBS 里的编码格式基本都支持 mp4&#x2F;mov&#x2F;mkv 封装，区别是 mkv 封装<strong>遇到断电等意外情况时可以保留之前录好的部分</strong>，<code>菜单栏-文件-录像转封装</code> 处转换为 mp4 格式后即可正常播放，但是部分播放器和软件（如旧版本Pr&#x2F;Ae）支持较差，可能会无法播放。有需要可以前往 <code>高级页</code> 设置自动转换封装。</p>
+<p>音轨：如要分离音频方便后期处理，这里务必勾选上所有要用到的音轨。</p>
+<p>编码器：如设置成 <strong>（使用推流编码器）</strong>，则会把直播的画面直接保存到本地，但对录像来说画质可能不够好，只求记录时可以这样设置，追求画面则设置成其他编码器。</p>
+<p>重新缩放输出：期望的推流和录像分辨率不一致时启用。</p>
+<p>自动分割文件：录制时间较长时可以固定文件大小&#x2F;时长分割保存到硬盘中，降低意外情况下的风险，也方便筛选素材。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E5%BD%95%E5%83%8F%E8%AE%BE%E7%BD%AE.png"
+                     
+                ></p>
+<h4 id="音频"><a href="#音频" class="headerlink" title="音频"></a>音频</h4><p>这里可以设置更高的比特率&#x2F;码率&#x2F;位率，提高声音质量，也可以给不同的轨道起名字方便后期区分。</p>
+<h4 id="回放缓存"><a href="#回放缓存" class="headerlink" title="回放缓存"></a>回放缓存</h4><p>相当于N卡的即时重放，非常适合保存游戏的高光时刻。</p>
+<p>最长回放时间：建议设置 <code>90s</code> 或 <code>120s</code></p>
+<blockquote>
+<p>强迫症玩家可以 +1s 不然实际时长会小 1s</p>
+</blockquote>
+<p>最大内存：无法估计时尽可能给高，如 <code>4096MB</code> 或 <code>8192MB</code></p>
+<h3 id="推流"><a href="#推流" class="headerlink" title="推流"></a>推流</h3><p>这里设置推流的服务器和秘钥，OBS默认并不支持国内的直播平台，把<strong>服务</strong>修改成 <code>自定义...</code>，从直播平台的开播页找到服务器地址和秘钥并复制到这里，注意不要泄露秘钥。</p>
+<h3 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h3><p>这里没有什么难点，注意<strong>开始推流&#x2F;停止推流</strong>设置同一个快捷键时，按键为开关式，一开一关。一般建议设置的快捷键：</p>
+<ul>
+<li>开始推流</li>
+<li>停止推流</li>
+<li>开始录制</li>
+<li>停止录制</li>
+<li>开始回放缓存</li>
+<li>停止回放缓存</li>
+<li>保存回放（<strong>输出</strong>页启用回放缓存后才可见）</li>
+</ul>
+<h2 id="CSGO素材录制"><a href="#CSGO素材录制" class="headerlink" title="CSGO素材录制"></a>CSGO素材录制</h2><h3 id="画面捕获"><a href="#画面捕获" class="headerlink" title="画面捕获"></a>画面捕获</h3><ul>
+<li>想得到<strong>拉伸画面</strong>，对源<strong>右键-变换-拉伸到全屏</strong> 或者选中源 <code>Ctrl+S</code></li>
+<li>取消相应游戏源&#x2F;窗口捕获&#x2F;显示器捕获中的 <code>显示鼠标指针</code></li>
+<li>受<strong>CSGO受信任模式</strong>的影响，官方匹配&#x2F;直接启动游戏时无法捕获游戏流，只能捕获显示器，性能较差；平台游戏不受影响。</li>
+<li>针对本地回放录像 demo 录屏有两种解决方法：<ol>
+<li>启动项添加 <code>-allow_third_party_software</code></li>
+<li>使用 <a class="link"   target="_blank" rel="noopener" href="https://advancedfx.org/" >HLAE<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>启动 CSGO<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E6%BA%90%E5%B1%9E%E6%80%A7.png"
+                     
+                ></li>
+</ol>
+</li>
+</ul>
+<h3 id="声音捕获"><a href="#声音捕获" class="headerlink" title="声音捕获"></a>声音捕获</h3><ol>
+<li>在<strong>来源面板</strong>添加<strong>应用程序音频捕获</strong>，先启动一次游戏并设置好捕获的窗口 <code>csgo.exe</code>。</li>
+<li>在<strong>高级音频属性</strong>中调整轨道分配，让游戏的音频单独一轨，<strong>设置-音轨-录像</strong>启用对应轨道。</li>
+</ol>
+<h3 id="录像设置"><a href="#录像设置" class="headerlink" title="录像设置"></a>录像设置</h3><p>CPU&#x2F;显卡编码根据个人偏好和电脑配置情况选择，以下给出推荐设置：</p>
+<h4 id="x264-编码器-1"><a href="#x264-编码器-1" class="headerlink" title="x264 编码器"></a>x264 编码器</h4><ul>
+<li>码率控制模式：强烈建议选择 <strong>CRF</strong></li>
+<li>CRF 的数值越小，画质越高，文件越大，推荐范围 <code>6~16</code></li>
+<li>CRF 数值减 6，码率翻倍</li>
+<li>CPU 使用预设 <code>veryfast ~ ultrafast</code> 选一个当前设置下不掉帧的档位，建议 <code>ultrafast</code></li>
+</ul>
+<h4 id="NVIDIA-NVENC-H-264-HEVC-编码器"><a href="#NVIDIA-NVENC-H-264-HEVC-编码器" class="headerlink" title="NVIDIA NVENC H.264&#x2F;HEVC 编码器"></a>NVIDIA NVENC H.264&#x2F;HEVC 编码器</h4><ul>
+<li>编码器：HEVC 比 H.264 效率更高，尤其是高分辨率</li>
+<li>速率控制：由于没有 CRF 模式，这里选择 CQP 模式</li>
+<li>CQ 级别：<ul>
+<li>H.264：推荐 <code>12</code>，不超过 <code>23</code></li>
+<li>HEVC：推荐 <code>16</code>，不超过 <code>26</code></li>
+</ul>
+</li>
+<li>预设：选 <code>质量</code> 或 <code>最高质量</code></li>
+</ul>
+<h4 id="Apple-ProRes-编码器-1"><a href="#Apple-ProRes-编码器-1" class="headerlink" title="Apple ProRes 编码器"></a>Apple ProRes 编码器</h4><p><strong>配置</strong>选择 <code>422 标准（APCN）</code></p>
+<h4 id="游戏设置"><a href="#游戏设置" class="headerlink" title="游戏设置"></a>游戏设置</h4><ul>
+<li>窗口模式</li>
+<li>取消绑定 Ctrl，追踪投掷物从 Alt 改为 R，避免切屏和截图时出现异常</li>
+<li>游戏中播放和暂停快捷键可与 OBS 开始&#x2F;结束录制保持一致</li>
+<li>控制台指令 <code>engine_no_focus_sleep 0</code> 确保窗口失焦后不掉帧</li>
+<li>慢放录像，如 1&#x2F;4：<code>demo_timescale 0.25</code> 或 <code>Shift+F2</code> 在 demoui 中手动操作</li>
+<li>限制游戏渲染帧率，如 120fps：<code>fps_max 120</code></li>
+</ul>
+<h4 id="帧率调整"><a href="#帧率调整" class="headerlink" title="帧率调整"></a>帧率调整</h4><p>录制高帧率素材的时候我们一般会慢放录像+限制FPS节省资源给OBS留出更多的性能空间，在编码设置确定之后调整录制帧率可以明显提高录制的速度，可参照上文设置120FPS甚至更高的帧率。</p>
+<p>菜单栏-停靠窗口-统计：启用统计面板，可以看到<strong>由于渲染延迟错过的帧</strong>和<strong>由于编码延迟跳过的帧</strong>和<strong>FPS</strong>。颜色变黄&#x2F;变红或丢帧较多时（偶尔）说明当前设置无法完美录像，需要调整编码器设置或降低录制FPS。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="https://fastly.jsdelivr.net/gh/Purple-CSGO/img-bed/img/OBS%E7%BB%9F%E8%AE%A1%E9%9D%A2%E6%9D%BF.png"
+                     
+                ></p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> OBS_推流录制工具</li>
+        <li><strong>作者:</strong> L.Y. Chen</li>
+        <li><strong>创建于
+                :</strong> 2025-08-24 04:36:42</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-09-10 18:15:33
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://ly-chen04.github.io/2025/08/24/OBS-推流录制工具/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E8%B5%9B%E5%8D%9A%E8%AF%B4%E6%98%8E%E4%B9%A6/">#赛博说明书</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2025/08/24/Intel%20QSV%E5%9C%A8FFmpeg%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">Intel QSV在FFmpeg中的实现与使用</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://waline-chi-three.vercel.app',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+          recaptchaV3Key: 'wasd',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">OBS_推流录制工具</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OBS%E2%80%94%E2%80%94%E6%8E%A8%E6%B5%81%E5%BD%95%E5%88%B6%E5%B7%A5%E5%85%B7"><span class="nav-text">OBS——推流录制工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E8%AF%86OBS"><span class="nav-text">初识OBS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A5%E6%BA%90%E9%9D%A2%E6%9D%BF"><span class="nav-text">来源面板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E9%9F%B3%E5%99%A8%E9%9D%A2%E6%9D%BF"><span class="nav-text">混音器面板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E9%9D%A2%E6%9D%BF"><span class="nav-text">场景面板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E5%9C%BA%E7%89%B9%E6%95%88%E9%9D%A2%E6%9D%BF"><span class="nav-text">转场特效面板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E8%A7%88%E7%AA%97%E5%8F%A3"><span class="nav-text">预览窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE"><span class="nav-text">设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E9%A2%91"><span class="nav-text">视频</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7"><span class="nav-text">高级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-text">输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E6%B5%81"><span class="nav-text">推流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-text">快捷键</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSGO%E7%B4%A0%E6%9D%90%E5%BD%95%E5%88%B6"><span class="nav-text">CSGO素材录制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E9%9D%A2%E6%8D%95%E8%8E%B7"><span class="nav-text">画面捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E9%9F%B3%E6%8D%95%E8%8E%B7"><span class="nav-text">声音捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%95%E5%83%8F%E8%AE%BE%E7%BD%AE"><span class="nav-text">录像设置</span></a></li></ol></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color"
+        xmlns="http://www.w3.org/1999/html">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-sparkles fa-fade"></i>&nbsp;&nbsp;<a href="/">L.Y. Chen</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        本站共 7 个条目
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <a target="_blank" href="https://time.is/Taiyuan" id="time_is_link" rel="nofollow noopener" style="font-size:17px">山西省太原市地方时:</a>
+            <span id="Taiyuan_z43d" style="font-size:17px"></span>
+            <script src="//widget.time.is/zh.js"></script>
+            <script>
+                time_is_widget.init({Taiyuan_z43d:{template:"TIME<br>SUN", sun_format:"日出: srhour:srminute 日落: sshour:ssminute<br>昼长: dlhours时 dlminutes分", coords:"37.8694400,112.5602800"}});
+            </script>
+        </div>
+        
+        
+            <div>
+                已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+            
+        
+        
+
+    </div>
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog "></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="在本网站查找内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/Swup.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/SwupSlideTheme.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/SwupScriptsPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/SwupProgressPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/SwupScrollPlugin.min.js" ></script><script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/SwupPreloadPlugin.min.js" ></script>
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	<script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/imageViewer.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/utils.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/main.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/layouts/navbarShrink.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/scrollTopBottom.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/lightDarkSwitch.js" ></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/layouts/categoryList.js" ></script>
+
+
+    <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/localSearch.js" ></script>
+
+
+
+    <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/codeBlock.js" ></script>
+
+
+
+    <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/layouts/lazyload.js" ></script>
+
+
+
+    <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/runtime.js" ></script>
+    <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/odometer.min.js" ></script>
+    <link rel="stylesheet" href="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/assets/odometer-theme-minimal.css">
+
+
+
+  <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/Typed.min.js" ></script>
+  <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/plugins/typed.js" ></script>
+
+
+
+
+
+    <script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/minimasonry.min.js" ></script>
+    <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/plugins/masonry.js" ></script>
+
+
+
+
+
+
+    <script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/tools/tocToggle.js" data-swup-reload-script></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/layouts/toc.js" data-swup-reload-script></script><script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/plugins/tabs.js" data-swup-reload-script></script>
+
+
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/moment-with-locales.min.js" data-swup-reload-script></script>
+<script type="module" src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/layouts/essays.js" data-swup-reload-script></script>
+
+
+
+
+	
+	<div id="aplayer"></div>
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/libs/APlayer.min.js" ></script>
+<script  src="https://registry.npmmirror.com/hexo-theme-redefine/2.8.5/files/source/js/build/plugins/aplayer.js" ></script>
+
+	
+</body>
+
+</html>
