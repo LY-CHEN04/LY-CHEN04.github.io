@@ -5,18 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>好心雨数字图鉴</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
-<link rel="icon" href="/images/redefine-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/images/HXY.svg" type="image/svg+xml">
 <style>
         :root {
             --primary-color: #ffffff;
-            --text-color: #333;
-            --bg-color: #fff;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #000000;
+            --text-secondary: rgba(60, 60, 67, 0.6);
+            --bg-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.95);
             --font-size: 16px;
-            --transition-time: 0.3s;
-            --polaroid-white: #f8f8f8;
-            --polaroid-shadow: rgba(0, 0, 0, 0.1);
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --transition-time: 0.2s;
+            --polaroid-white: #ffffff;
+            --polaroid-shadow: rgba(0, 0, 0, 0.08);
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --border-radius: 12px;
+            --border-radius-small: 8px;
+            --border-radius-large: 16px;
+            --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --separator-color: rgba(198, 198, 200, 0.6);
+            --accent-blue: #007AFF;
+            --accent-green: #34C759;
+            --accent-red: #FF3B30;
+            --accent-orange: #FF9500;
+            --accent-purple: #AF52DE;
+            --accent-pink: #FF2D92;
+            --accent-teal: #5AC8FA;
+            --accent-indigo: #5856D6;
+            --accent-yellow: #FFCC00;
         }
         /* 深色模式变量 */
         [data-theme="dark"] {
@@ -27,18 +44,21 @@
             --polaroid-white: #2a2a2a;
             --polaroid-shadow: rgba(255, 255, 255, 0.1);
         }
-        /* 主题色变量 */
+        /* 主题色变量 - 苹果风格 */
+        [data-theme-color="white"] {
+            --primary-color: #ffffff;
+        }
         [data-theme-color="lightblue"] {
-            --primary-color: #a8d8ea;
+            --primary-color: var(--accent-blue);
         }
         [data-theme-color="lightpink"] {
-            --primary-color: #ffb5b5;
+            --primary-color: var(--accent-pink);
         }
         [data-theme-color="lightgreen"] {
-            --primary-color: #a8e6cf;
+            --primary-color: var(--accent-green);
         }
         [data-theme-color="lightpurple"] {
-            --primary-color: #d4a5ff;
+            --primary-color: var(--accent-purple);
         }
         * {
             margin: 0;
@@ -134,7 +154,7 @@
                 transform: translateY(0) rotate(var(--rotation, 0deg));
             }
         }
-        /* 主页内容 */
+        /* 主页内容 - 苹果风格 */
         .main-content {
             position: relative;
             min-height: 100vh;
@@ -142,10 +162,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px) saturate(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(1.1);
             z-index: 5;
-            pointer-events: auto;
+            pointer-events: none;
         }
         .main-title {
             color: white;
@@ -171,29 +192,71 @@
             60% { transform: translate3d(0, -0.1em, 0); opacity: 1; }
             100% { transform: translate3d(0, 0, 0); opacity: 1; }
         }
-        /* 扫光效果（主题色） */
+        /* 优化的扫光效果 */
         .main-title::after {
             content: '';
             position: absolute;
-            top: 0; left: -25%;
-            width: 22%; height: 100%;
-            background:
-                linear-gradient(120deg, rgba(255,255,255,0) 0%, var(--primary-color) 52%, rgba(255,255,255,0) 100%),
-                linear-gradient(120deg, rgba(255,255,255,0) 48%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0) 52%);
-            mix-blend-mode: plus-lighter;
-            opacity: 0.0;
-            transform: skewX(-20deg);
+            top: 0; left: -30%;
+            width: 30%; height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                transparent 25%, 
+                rgba(255, 255, 255, 0.9) 50%, 
+                transparent 75%, 
+                transparent 100%);
+            opacity: 0;
+            transform: translateX(0) skewX(-15deg);
             pointer-events: none;
-            animation: shineSweep 1400ms ease-in-out 1000ms both;
+            animation: shineSweep 1200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 1000ms both;
             animation-iteration-count: 1;
             will-change: transform, opacity;
-            filter: blur(0.5px);
+            z-index: 1;
+        }
+        /* 主题色扫光效果（可选） */
+        .main-title.theme-shine::after {
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                transparent 25%, 
+                var(--primary-color) 50%, 
+                transparent 75%, 
+                transparent 100%);
+            opacity: 0.7;
+        }
+        /* 高级扫光效果：多层渐变 */
+        .main-title.advanced-shine::after {
+            background: 
+                linear-gradient(90deg, 
+                    transparent 0%, 
+                    transparent 20%, 
+                    rgba(255, 255, 255, 0.6) 40%, 
+                    rgba(255, 255, 255, 0.9) 50%, 
+                    rgba(255, 255, 255, 0.6) 60%, 
+                    transparent 80%, 
+                    transparent 100%),
+                linear-gradient(90deg, 
+                    transparent 0%, 
+                    transparent 30%, 
+                    var(--primary-color) 50%, 
+                    transparent 70%, 
+                    transparent 100%);
+            background-blend-mode: screen;
+            opacity: 0.8;
         }
         @keyframes shineSweep {
-            0% { left: -25%; opacity: 0; }
-            10% { opacity: 0.65; }
-            50% { left: 75%; opacity: 0.42; }
-            100% { left: 125%; opacity: 0; }
+            0% { 
+                transform: translateX(0) skewX(-15deg); 
+                opacity: 0; 
+            }
+            20% { 
+                opacity: 1; 
+            }
+            80% { 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateX(130%) skewX(-15deg); 
+                opacity: 0; 
+            }
         }
         /* 降低动效在弱设备的开销 */
         @media (prefers-reduced-motion: reduce) {
@@ -201,18 +264,23 @@
             .main-title::after, .main-title.shine-active::after { animation: none; opacity: 0; }
         }
         .enter-button {
-            padding: 15px 40px;
-            font-size: 1.2em;
+            padding: 16px 32px;
+            font-size: 1.1em;
             border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px) saturate(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(1.1);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-time) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             z-index: 10;
             pointer-events: auto;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-light);
         }
         .enter-button:hover {
             background: rgba(255, 255, 255, 0.3);
@@ -233,24 +301,28 @@
         }
         /* 设置按钮 */
         .settings-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            bottom: auto !important;
             width: 50px;
             height: 50px;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: none;
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(1.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-size: 24px;
-            transition: all 0.3s ease;
+            transition: all var(--transition-time) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 15;
             pointer-events: auto;
+            box-shadow: var(--shadow-light);
             opacity: 1 !important;
             visibility: visible !important;
         }
@@ -276,8 +348,8 @@
             transition: all 0.3s ease;
             z-index: 1000;
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px 24px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 30px;
             align-items: start;
             overflow-y: auto;
             overflow-x: hidden;
@@ -288,6 +360,11 @@
             visibility: visible;
         }
         /* 设置面板内容样式 */
+        .settings-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
         .settings-section {
             margin-bottom: 0;
         }
@@ -305,46 +382,103 @@
         .settings-item {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .settings-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .settings-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .settings-item:hover::before {
+            opacity: 1;
         }
         .settings-item .setting-label {
             display: flex;
             flex-direction: column;
             flex: 1;
-            margin-right: 12px;
+            margin-right: 16px;
+            min-width: 0;
         }
         .settings-item .setting-name {
-            font-weight: 500;
-            margin-bottom: 2px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: var(--text-color);
+            letter-spacing: -0.01em;
         }
         .settings-item .setting-note {
-            font-size: 0.85em;
-            opacity: 0.7;
-            line-height: 1.3;
+            font-size: 13px;
+            opacity: 0.65;
+            line-height: 1.4;
+            color: var(--text-color);
+            font-weight: 400;
         }
-        .settings-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        /* 浅色模式下增强可读性与对比度 */
+        /* 浅色模式下苹果风格设置面板 */
         body:not([data-theme='dark']) .settings-panel {
-            background: rgba(255,255,255,0.98);
-            border: 1px solid rgba(0,0,0,0.08);
-            color: #1a1a1a;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.95);
+            border: 1px solid rgba(0,0,0,0.06);
+            color: var(--text-color);
+            box-shadow: var(--shadow-heavy);
+            border-radius: var(--border-radius-large);
+            backdrop-filter: blur(20px) saturate(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(1.1);
         }
         body:not([data-theme='dark']) .settings-item {
-            background: rgba(0,0,0,0.04);
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        body:not([data-theme='dark']) .settings-item::before {
+            background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.02) 100%);
         }
         body:not([data-theme='dark']) .settings-item:hover {
-            background: rgba(0,0,0,0.07);
+            background: rgba(0,0,0,0.04);
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
-        body:not([data-theme='dark']) .settings-link { color: #111; }
-        body:not([data-theme='dark']) .version-info { color: #444; }
-        body:not([data-theme='dark']) .close-button { background: rgba(0,0,0,0.06); }
+        body:not([data-theme='dark']) .settings-link { 
+            color: var(--text-color);
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        body:not([data-theme='dark']) .settings-link::before {
+            background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.02) 100%);
+        }
+        body:not([data-theme='dark']) .settings-link:hover {
+            background: rgba(0,0,0,0.04);
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        body:not([data-theme='dark']) .version-info { 
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        body:not([data-theme='dark']) .close-button { 
+            background: rgba(0,0,0,0.06);
+            border-radius: var(--border-radius-small);
+        }
         /* 详情页在浅色模式增强对比度 */
         body:not([data-theme='dark']) .detail-content { background: #ffffff; color: #111; }
         body:not([data-theme='dark']) .detail-info h2 { color: #0f172a; }
@@ -366,14 +500,10 @@
         }
         /* 确保内容层级在遮罩之上 */
         body:not([data-theme='dark']) .detail-content > * { position: relative; z-index: 1; }
-        /* 浅色模式 + 高级材质 开启：强制深色文字，去除文字阴影 */
-        body:not([data-theme='dark']):not(.basic-materials) .detail-info { color: #111; }
-        body:not([data-theme='dark']):not(.basic-materials) .detail-info h2 { color: #0f172a; text-shadow: none; }
-        body:not([data-theme='dark']):not(.basic-materials) .detail-info p { color: #1f2937; opacity: 1; }
-        /* 浅色模式 + 高级材质 关闭：保持深色文字，并关闭遮罩模糊避免误感知"文字发虚" */
-        body.basic-materials:not([data-theme='dark']) .detail-info { color: #111; }
-        body.basic-materials:not([data-theme='dark']) .detail-info h2 { color: #0f172a; text-shadow: none; }
-        body.basic-materials:not([data-theme='dark']) .detail-info p { color: #1f2937; opacity: 1; }
+        /* 浅色模式：统一标题样式，无论高级材质开启或关闭 */
+        body:not([data-theme='dark']) .detail-info { color: #111; }
+        body:not([data-theme='dark']) .detail-info h2 { color: #0f172a; text-shadow: none; }
+        body:not([data-theme='dark']) .detail-info p { color: #1f2937; opacity: 1; }
         body.basic-materials:not([data-theme='dark']) .detail-content::before { backdrop-filter: none; -webkit-backdrop-filter: none; }
         :root { --glass-blur: 14px; --glass-sat: 1.1; }
         /* 高级材质：开启时全局窗口、按钮和标题文字均毛玻璃；关闭时不透明 */
@@ -394,6 +524,87 @@
         body.high-contrast .detail-info { color: #0b0b0b; }
         body.high-contrast .detail-info h2 { color: #0a0a0a; }
         body.high-contrast .detail-info p { color: #171717; opacity: 1; }
+        /* 高对比度模式 - 全局文字增强 */
+        body.high-contrast {
+            --text-color: #0a0a0a;
+            --text-color-secondary: #1a1a1a;
+            --text-color-muted: #2a2a2a;
+        }
+        /* 高对比度模式 - 主要文字元素 */
+        body.high-contrast .hero-title,
+        body.high-contrast .hero-subtitle,
+        body.high-contrast .photo-title,
+        body.high-contrast .photo-description,
+        body.high-contrast .settings-section h3,
+        body.high-contrast .setting-name,
+        body.high-contrast .setting-note,
+        body.high-contrast .viewer-btn,
+        body.high-contrast .back-button,
+        body.high-contrast .settings-button,
+        body.high-contrast .enter-button {
+            color: #0a0a0a !important;
+            text-shadow: none !important;
+            font-weight: 600 !important;
+        }
+        /* 高对比度模式 - 深色主题下的文字 */
+        [data-theme='dark'] body.high-contrast {
+            --text-color: #ffffff;
+            --text-color-secondary: #f0f0f0;
+            --text-color-muted: #e0e0e0;
+        }
+        [data-theme='dark'] body.high-contrast .hero-title,
+        [data-theme='dark'] body.high-contrast .hero-subtitle,
+        [data-theme='dark'] body.high-contrast .photo-title,
+        [data-theme='dark'] body.high-contrast .photo-description,
+        [data-theme='dark'] body.high-contrast .settings-section h3,
+        [data-theme='dark'] body.high-contrast .setting-name,
+        [data-theme='dark'] body.high-contrast .setting-note,
+        [data-theme='dark'] body.high-contrast .viewer-btn,
+        [data-theme='dark'] body.high-contrast .back-button,
+        [data-theme='dark'] body.high-contrast .settings-button,
+        [data-theme='dark'] body.high-contrast .enter-button {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+            font-weight: 600 !important;
+        }
+        /* 高对比度模式 - 卡片和列表文字 */
+        body.high-contrast .photo-card,
+        body.high-contrast .photo-card h3,
+        body.high-contrast .photo-card p,
+        body.high-contrast .gallery-item,
+        body.high-contrast .gallery-item h3,
+        body.high-contrast .gallery-item p,
+        body.high-contrast .settings-item,
+        body.high-contrast .switch-label,
+        body.high-contrast .range-value {
+            color: #0a0a0a !important;
+            font-weight: 600 !important;
+        }
+        [data-theme='dark'] body.high-contrast .photo-card,
+        [data-theme='dark'] body.high-contrast .photo-card h3,
+        [data-theme='dark'] body.high-contrast .photo-card p,
+        [data-theme='dark'] body.high-contrast .gallery-item,
+        [data-theme='dark'] body.high-contrast .gallery-item h3,
+        [data-theme='dark'] body.high-contrast .gallery-item p,
+        [data-theme='dark'] body.high-contrast .settings-item,
+        [data-theme='dark'] body.high-contrast .switch-label,
+        [data-theme='dark'] body.high-contrast .range-value {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+            font-weight: 600 !important;
+        }
+        /* 高对比度模式 - 开关状态文字 */
+        body.high-contrast .switch-status {
+            color: #0a0a0a !important;
+            font-weight: 700 !important;
+            opacity: 1 !important;
+        }
+        [data-theme='dark'] body.high-contrast .switch-status {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            opacity: 1 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+        }
         [data-theme='dark']:not(.basic-materials) .settings-panel,
         [data-theme='dark']:not(.basic-materials) .detail-content,
         [data-theme='dark']:not(.basic-materials) .viewer-toolbar,
@@ -476,14 +687,18 @@
         }
         /* 响应式：小屏回退为单列 */
         @media (max-width: 768px) {
-            .settings-panel { grid-template-columns: 1fr; }
+            .settings-panel { 
+                grid-template-columns: 1fr; 
+                padding: 20px;
+            }
         }
-        /* 开关按钮样式 */
+        /* 开关按钮样式 - 苹果最新设计 */
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 26px;
+            width: 52px;
+            height: 32px;
+            flex-shrink: 0;
         }
         .switch input {
             opacity: 0;
@@ -497,81 +712,216 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(255, 255, 255, 0.2);
-            transition: .3s;
-            border-radius: 26px;
+            background-color: #e5e5e7;
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            border: 1px solid #d1d1d6;
         }
         .switch-slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
             border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         input:checked + .switch-slider {
             background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
         }
         input:checked + .switch-slider:before {
-            transform: translateX(24px);
+            transform: translateX(20px);
+            background-color: #ffffff;
         }
-        /* 颜色选择器样式 */
+        .switch:hover .switch-slider {
+            opacity: 0.8;
+        }
+        /* 开关状态指示器 */
+        .switch-status {
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-color);
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .switch input:checked ~ .switch-status {
+            color: var(--primary-color);
+            opacity: 1;
+        }
+        .switch-status::before {
+            content: "OFF";
+        }
+        .switch input:checked ~ .switch-status::before {
+            content: "ON";
+        }
+        /* 颜色选择器样式 - 苹果风格 */
         .color-options {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
         .color-option {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .color-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .color-option:hover::before {
+            opacity: 1;
         }
         .color-option.active {
-            border-color: var(--primary-color);
+            border-color: var(--text-color);
             transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px var(--primary-color), 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        /* 字体大小选择器 */
+        /* 字体大小选择器 - 苹果风格 */
         .font-size-options {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         .font-size-option {
-            padding: 5px 15px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.04);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            min-width: 44px;
+            text-align: center;
+        }
+        .font-size-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .font-size-option:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.3);
+            border-color: var(--primary-color);
+        }
+        .font-size-option:hover::before {
+            opacity: 1;
         }
         .font-size-option.active {
             background: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2), 0 2px 8px rgba(var(--primary-color-rgb), 0.2);
         }
         /* 链接样式 */
         .settings-link {
             color: var(--text-color);
             text-decoration: none;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 14px 20px;
+            border-radius: 12px;
             display: block;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .settings-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         .settings-link:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .settings-link:hover::before {
+            opacity: 1;
         }
         /* 版本信息样式 */
         .version-info {
             color: var(--text-color);
-            opacity: 0.7;
+            opacity: 0.8;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-weight: 500;
+            font-size: 13px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
         }
         .version-info:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .version-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .version-info:hover::before {
             opacity: 1;
         }
         /* 关闭按钮 */
@@ -633,6 +983,8 @@
             z-index: 101;
             transition: all 0.3s ease;
             opacity: 1;
+            transform: translateZ(0);
+            will-change: opacity, transform;
         }
         .back-button:hover {
             background: rgba(255, 255, 255, 0.3);
@@ -651,24 +1003,24 @@
             max-width: 1400px;
             margin: 0 auto;
         }
-        /* 照片卡片样式 - 拍立得相纸效果 */
+        /* 照片卡片样式 - 苹果风格 */
         .photo-card {
             position: relative;
-            background: var(--polaroid-white);
-            border-radius: 12px;
-            padding: 12px 12px 80px 12px;
-            box-shadow: 0 8px 25px var(--polaroid-shadow),
-                       0 4px 12px var(--polaroid-shadow),
-                       inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                       inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px 16px 80px 16px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all var(--transition-time) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform-origin: center;
             perspective: 1000px;
             overflow: hidden;
             transform: rotate(var(--card-rotation, 0deg));
             will-change: transform;
             backface-visibility: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         .photo-card:nth-child(odd) {
             --card-rotation: -1deg;
@@ -718,11 +1070,8 @@
         }
         .photo-card:hover {
             transform: translateY(-8px) rotate(0deg) scale(1.02);
-            box-shadow: 0 20px 40px var(--polaroid-shadow),
-                       0 8px 20px var(--polaroid-shadow),
-                       inset 0 1px 0 rgba(255, 255, 255, 0.6),
-                       inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-                       0 0 0 2px var(--primary-color);
+            box-shadow: var(--shadow-heavy);
+            border-color: rgba(0, 0, 0, 0.08);
             z-index: 10;
         }
         .photo-card.keyboard-focused {
@@ -735,14 +1084,7 @@
             z-index: 10;
             outline: none;
         }
-        .photo-card.clicked {
-            animation: cardClick 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        @keyframes cardClick {
-            0% { transform: scale(1) rotate(var(--card-rotation, 0deg)); }
-            50% { transform: scale(0.985) rotate(var(--card-rotation, 0deg)); }
-            100% { transform: scale(1) rotate(var(--card-rotation, 0deg)); }
-        }
+        /* 原有的照片卡片点击动画已被苹果风格动画替代 */
         .photo-card.active {
             transform: scale(1.03) rotate(0deg);
             box-shadow: 0 25px 50px var(--polaroid-shadow),
@@ -766,14 +1108,15 @@
             filter: sepia(0) contrast(1.1) brightness(1.05);
         }
         .photo-info {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 50px;
+            position: absolute !important;
+            bottom: 12px !important;
+            left: 12px !important;
+            right: 12px !important;
+            top: auto !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-end !important;
+            height: 50px !important;
         }
         .photo-number {
             font-size: 1.8em;
@@ -911,9 +1254,11 @@
             opacity: 0.9;
         }
         .detail-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            bottom: auto !important;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -927,6 +1272,7 @@
             align-items: center;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-size: 20px;
+            z-index: 2001;
         }
         .detail-close:hover {
             background: rgba(255, 255, 255, 0.3);
@@ -986,13 +1332,24 @@
         .viewer-btn {
             appearance: none;
             border: none;
-            border-radius: 8px;
-            padding: 8px 10px;
+            border-radius: var(--border-radius-small);
+            padding: 12px 20px;
             color: #fff;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.15);
             cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all var(--transition-time) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            backdrop-filter: blur(20px) saturate(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(1.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: var(--shadow-light);
         }
-        .viewer-btn:hover { background: rgba(255,255,255,0.18); }
+        .viewer-btn:hover { 
+            background: rgba(255,255,255,0.18);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
         .viewer-close {
             position: fixed;
             top: 16px;
@@ -1026,7 +1383,119 @@
         @media (max-width: 768px) { body:not([data-theme='dark']) .detail-info { padding-left: 0; border-left: none; } }
         /* 辅助类：用于 JS 触发扫光动画的重启 */
         .main-title.shine-active::after {
-            animation: shineSweep 1400ms ease-in-out 0ms both;
+            animation: shineSweep 1200ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms both;
+        }
+        /* 苹果风格的统一按钮点击动画 */
+        .apple-click-animation {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            will-change: transform, background-color, box-shadow;
+        }
+        /* 点击时的缩放和颜色变化 */
+        .apple-click-animation:active {
+            transform: scale(0.96);
+            transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        /* 涟漪效果 */
+        .apple-click-animation::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .apple-click-animation.ripple::before {
+            width: 300px;
+            height: 300px;
+            opacity: 1;
+            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                       height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                       opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        /* 深色模式下的涟漪效果 */
+        [data-theme="dark"] .apple-click-animation::before {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        /* 浅色模式下的涟漪效果 */
+        body:not([data-theme="dark"]) .apple-click-animation::before {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        /* 确保按钮内容在涟漪效果之上 */
+        .apple-click-animation > * {
+            position: relative;
+            z-index: 2;
+        }
+        /* 特殊按钮的个性化动画 */
+        .enter-button.apple-click-animation:active {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+        }
+        .settings-button.apple-click-animation:active,
+        .back-button.apple-click-animation:active,
+        .detail-close.apple-click-animation:active,
+        .viewer-close.apple-click-animation:active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .close-button.apple-click-animation:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+        .viewer-btn.apple-click-animation:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.96) translateY(0px);
+            transition: all 0.1s ease;
+        }
+        /* 开关按钮的特殊动画 */
+        .switch.apple-click-animation:active .switch-slider {
+            transform: scale(0.98);
+        }
+        /* 颜色选项的特殊动画 */
+        .color-option.apple-click-animation:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        /* 字体大小选项的特殊动画 */
+        .font-size-option.apple-click-animation:active {
+            transform: scale(0.95);
+            background: var(--primary-color);
+            color: white;
+        }
+        /* 设置链接的特殊动画 */
+        .settings-link.apple-click-animation:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.98) translateY(0px);
+            transition: all 0.1s ease;
+        }
+        /* 版本信息的特殊动画 */
+        .version-info.apple-click-animation:active {
+            transform: scale(0.96) translateY(0px);
+            opacity: 0.8;
+            transition: all 0.1s ease;
+        }
+        /* 照片卡片的增强点击动画 */
+        .photo-card.apple-click-animation:active {
+            transform: translateY(-4px) rotate(0deg) scale(0.98);
+            transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        /* 减少动画在弱设备上的开销 */
+        @media (prefers-reduced-motion: reduce) {
+            .apple-click-animation,
+            .apple-click-animation:active,
+            .apple-click-animation::before,
+            .apple-click-animation.ripple::before {
+                transition: none;
+                animation: none;
+            }
         }
     </style>
 </head>
@@ -1036,7 +1505,7 @@
     <!-- 主要内容 -->
     <div class="main-content">
         <h1 class="main-title" id="heroTitle">好心雨数字图鉴</h1>
-        <button class="enter-button" id="enterButton">进入图鉴</button>
+        <button class="enter-button apple-click-animation" id="enterButton">进入图鉴</button>
     </div>
     <!-- 底部信息 -->
     <div class="bottom-info">
@@ -1052,12 +1521,12 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
         ©2025 OYAMAMahiro 保留所有权利。
     </div>
     <!-- 设置按钮 -->
-    <button class="settings-button" id="settingsButton">
+    <button class="settings-button apple-click-animation" id="settingsButton">
         <span class="mdi mdi-cog"></span>
     </button>
     <!-- 照片展示页面 -->
     <div class="gallery-view" id="galleryView">
-        <button class="back-button" id="backButton">
+        <button class="back-button apple-click-animation" id="backButton">
             <span class="mdi mdi-arrow-left"></span>
         </button>
         <div class="gallery-grid" id="galleryGrid">
@@ -1070,7 +1539,7 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
     <!-- 详情窗口 -->
     <div class="detail-modal" id="detailModal">
         <div class="detail-content">
-            <button class="detail-close" id="detailClose">
+            <button class="detail-close apple-click-animation" id="detailClose">
                 <span class="mdi mdi-close"></span>
             </button>
             <div class="detail-media">
@@ -1085,239 +1554,264 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
     <div class="viewer-modal" id="viewerModal">
         <div class="viewer-canvas" id="viewerCanvas"></div>
         <div class="viewer-toolbar">
-            <button class="viewer-btn" id="zoomInBtn"><span class="mdi mdi-magnify-plus-outline"></span></button>
-            <button class="viewer-btn" id="zoomOutBtn"><span class="mdi mdi-magnify-minus-outline"></span></button>
-            <button class="viewer-btn" id="rotateLeftBtn"><span class="mdi mdi-rotate-left"></span></button>
-            <button class="viewer-btn" id="rotateRightBtn"><span class="mdi mdi-rotate-right"></span></button>
-            <button class="viewer-btn" id="saveBtn"><span class="mdi mdi-download"></span></button>
+            <button class="viewer-btn apple-click-animation" id="zoomInBtn"><span class="mdi mdi-magnify-plus-outline"></span></button>
+            <button class="viewer-btn apple-click-animation" id="zoomOutBtn"><span class="mdi mdi-magnify-minus-outline"></span></button>
+            <button class="viewer-btn apple-click-animation" id="rotateLeftBtn"><span class="mdi mdi-rotate-left"></span></button>
+            <button class="viewer-btn apple-click-animation" id="rotateRightBtn"><span class="mdi mdi-rotate-right"></span></button>
+            <button class="viewer-btn apple-click-animation" id="saveBtn"><span class="mdi mdi-download"></span></button>
         </div>
-        <button class="viewer-close" id="viewerClose"><span class="mdi mdi-close"></span></button>
+        <button class="viewer-close apple-click-animation" id="viewerClose"><span class="mdi mdi-close"></span></button>
     </div>
     <!-- 设置面板 -->
     <div class="settings-panel" id="settingsPanel">
-        <button class="close-button" id="closeSettings">
+        <button class="close-button apple-click-animation" id="closeSettings">
             <span class="mdi mdi-close"></span>
-        </button>
-        <!-- 外观设置 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-palette"></span>外观</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">夜间模式</div>
-                    <div class="setting-note">切换到深色主题以减少眼部疲劳并获得最佳视觉效果</div>
+        </button>   
+        <!-- 左列 -->
+        <div class="settings-column">
+            <!-- 外观设置 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-palette"></span>外观</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">夜间模式</div>
+                        <div class="setting-note">切换到深色主题以减少眼部疲劳并获得最佳视觉效果</div>
+                    </div>
+                    <label class="switch apple-click-animation">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="switch-slider"></span>
+                        <span class="switch-status"></span>
+                    </label>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="darkModeToggle">
-                    <span class="switch-slider"></span>
-                </label>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">主题色</div>
-                    <div class="setting-note">选择全局界面主要强调色</div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">主题色</div>
+                        <div class="setting-note">选择全局界面主要强调色</div>
+                    </div>
+                    <div class="color-options">
+                        <div class="color-option apple-click-animation active" data-color="white" style="background-color: white"></div>
+                        <div class="color-option apple-click-animation" data-color="lightblue" style="background-color: var(--accent-blue)"></div>
+                        <div class="color-option apple-click-animation" data-color="lightpink" style="background-color: var(--accent-pink)"></div>
+                        <div class="color-option apple-click-animation" data-color="lightgreen" style="background-color: var(--accent-green)"></div>
+                        <div class="color-option apple-click-animation" data-color="lightpurple" style="background-color: var(--accent-purple)"></div>
+                    </div>
                 </div>
-                <div class="color-options">
-                    <div class="color-option active" data-color="white" style="background-color: white"></div>
-                    <div class="color-option" data-color="lightblue" style="background-color: #a8d8ea"></div>
-                    <div class="color-option" data-color="lightpink" style="background-color: #ffb5b5"></div>
-                    <div class="color-option" data-color="lightgreen" style="background-color: #a8e6cf"></div>
-                    <div class="color-option" data-color="lightpurple" style="background-color: #d4a5ff"></div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">字体大小</div>
+                        <div class="setting-note">调整全局界面文字大小</div>
+                    </div>
+                    <div class="font-size-options">
+                        <div class="font-size-option apple-click-animation" data-size="small">小</div>
+                        <div class="font-size-option apple-click-animation active" data-size="medium">中</div>
+                        <div class="font-size-option apple-click-animation" data-size="large">大</div>
+                    </div>
                 </div>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">字体大小</div>
-                    <div class="setting-note">调整全局界面文字大小</div>
-                </div>
-                <div class="font-size-options">
-                    <div class="font-size-option" data-size="small">小</div>
-                    <div class="font-size-option active" data-size="medium">中</div>
-                    <div class="font-size-option" data-size="large">大</div>
-                </div>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">全局字体</div>
-                    <div class="setting-note">选择网站全局字体类型</div>
-                </div>
-                <div class="font-size-options">
-                    <div class="font-size-option" data-font="system">系统默认</div>
-                    <div class="font-size-option" data-font="kaiti">楷体</div>
-                    <div class="font-size-option" data-font="source-serif">思源宋体</div>
-                    <div class="font-size-option" data-font="helvetica">Helvetica</div>
-                </div>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">按键控制</div>
-                    <div class="setting-note">使用方向键导航卡片，Enter进入详情，Esc关闭</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="keyboardControlToggle" checked>
-                    <span class="switch-slider"></span>
-                </label>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">高级材质</div>
-                    <div class="setting-note">启用毛玻璃效果和高级视觉效果</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="advancedMaterialsToggle" checked>
-                    <span class="switch-slider"></span>
-                </label>
-            </div>
-        </div>
-        <!-- 文本可读性 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-format-size"></span>文本与可读性</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">高对比度文字</div>
-                    <div class="setting-note">在某些情况下提高文字可读性</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="highContrastToggle">
-                    <span class="switch-slider"></span>
-                </label>
-            </div>
-        </div>
-        <!-- 高级材质细粒度 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-water-outline"></span>高级材质细粒度</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">模糊强度</div>
-                    <div class="setting-note">调整毛玻璃效果的模糊程度</div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="glassBlurRange" min="0" max="30" step="1" style="width:120px">
-                    <span class="range-value" id="glassBlurValue">14</span>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">全局字体</div>
+                        <div class="setting-note">选择网站全局字体类型</div>
+                    </div>
+                    <div class="font-size-options">
+                        <div class="font-size-option apple-click-animation" data-font="system">系统默认</div>
+                        <div class="font-size-option apple-click-animation" data-font="kaiti">楷体</div>
+                        <div class="font-size-option apple-click-animation" data-font="source-serif">思源宋体</div>
+                        <div class="font-size-option apple-click-animation" data-font="helvetica">Helvetica</div>
+                    </div>
                 </div>
             </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">饱和度</div>
-                    <div class="setting-note">微调毛玻璃效果的色彩饱和度</div>
+            <!-- 交互控制 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-gamepad-variant"></span>交互控制</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">按键控制</div>
+                        <div class="setting-note">使用方向键导航卡片，Enter进入详情，Esc关闭</div>
+                    </div>
+                    <label class="switch apple-click-animation">
+                        <input type="checkbox" id="keyboardControlToggle" checked>
+                        <span class="switch-slider"></span>
+                        <span class="switch-status"></span>
+                    </label>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="glassSatRange" min="1" max="2" step="0.05" style="width:120px">
-                    <span class="range-value" id="glassSatValue">1.1</span>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">高级材质</div>
+                        <div class="setting-note">启用毛玻璃效果和高级视觉效果</div>
+                    </div>
+                    <label class="switch apple-click-animation">
+                        <input type="checkbox" id="advancedMaterialsToggle" checked>
+                        <span class="switch-slider"></span>
+                        <span class="switch-status"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">扫光效果</div>
+                        <div class="setting-note">选择标题扫光动画的样式</div>
+                    </div>
+                    <div class="font-size-options">
+                        <div class="font-size-option apple-click-animation active" data-shine="basic">基础</div>
+                        <div class="font-size-option apple-click-animation" data-shine="theme">主题色</div>
+                        <div class="font-size-option apple-click-animation" data-shine="advanced">高级</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- 媒体行为 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-play-circle-outline"></span>媒体行为</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">视频播放</div>
-                    <div class="setting-note">设置视频的播放方式</div>
-                </div>
-                <div class="font-size-options">
-                    <div class="font-size-option" data-video="auto-muted">静音自动播放</div>
-                    <div class="font-size-option" data-video="hover">悬停播放</div>
-                    <div class="font-size-option" data-video="manual">手动播放</div>
-                </div>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">图片策略</div>
-                    <div class="setting-note">选择图片加载的优先级</div>
-                </div>
-                <div class="font-size-options">
-                    <div class="font-size-option" data-img="quality">优先清晰</div>
-                    <div class="font-size-option" data-img="speed">优先速度</div>
+            <!-- 文本可读性 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-format-size"></span>文本与可读性</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">高对比度文字</div>
+                        <div class="setting-note">在某些情况下提高文字可读性</div>
+                    </div>
+                    <label class="switch apple-click-animation">
+                        <input type="checkbox" id="highContrastToggle">
+                        <span class="switch-slider"></span>
+                        <span class="switch-status"></span>
+                    </label>
                 </div>
             </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">懒加载阈值</div>
-                    <div class="setting-note">设置图片懒加载的触发距离</div>
+            <!-- 维护工具 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-tools"></span>维护</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">一键恢复默认</div>
+                        <div class="setting-note">将所有设置恢复到初始状态</div>
+                    </div>
+                    <button class="viewer-btn apple-click-animation" id="resetSettingsBtn">恢复默认</button>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="lazyThresholdRange" min="0" max="2000" step="50" style="width:120px">
-                    <span class="range-value" id="lazyThresholdValue">300px</span>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">清理本地缓存</div>
+                        <div class="setting-note">清除浏览器本地存储的所有数据</div>
+                    </div>
+                    <button class="viewer-btn apple-click-animation" id="clearCacheBtn">清理缓存</button>
                 </div>
             </div>
         </div>
-        <!-- 返回按钮行为 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-arrow-left"></span>返回按钮</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">自动隐藏灵敏度</div>
-                    <div class="setting-note">设置返回按钮自动隐藏的滚动距离</div>
+        <!-- 右列 -->
+        <div class="settings-column">
+            <!-- 高级材质细粒度 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-water-outline"></span>高级材质细粒度</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">模糊强度</div>
+                        <div class="setting-note">调整毛玻璃效果的模糊程度</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="glassBlurRange" min="0" max="30" step="1" style="width:120px">
+                        <span class="range-value" id="glassBlurValue">14</span>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="backHideSensitivityRange" min="0" max="600" step="20" style="width:120px">
-                    <span class="range-value" id="backHideSensitivityValue">100px</span>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">饱和度</div>
+                        <div class="setting-note">微调毛玻璃效果的色彩饱和度</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="glassSatRange" min="1" max="2" step="0.05" style="width:120px">
+                        <span class="range-value" id="glassSatValue">1.1</span>
+                    </div>
                 </div>
             </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">停止滚动显示</div>
-                    <div class="setting-note">设置停止滚动后显示返回按钮的延迟时间</div>
+            <!-- 媒体行为 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-play-circle-outline"></span>媒体行为</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">视频播放</div>
+                        <div class="setting-note">设置视频的播放方式</div>
+                    </div>
+                    <div class="font-size-options">
+                        <div class="font-size-option apple-click-animation" data-video="auto-muted">静音自动播放</div>
+                        <div class="font-size-option apple-click-animation" data-video="hover">悬停播放</div>
+                        <div class="font-size-option apple-click-animation" data-video="manual">手动播放</div>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="range" id="backHideDelayRange" min="100" max="5000" step="100" style="width:120px">
-                    <span class="range-value" id="backHideDelayValue">1000ms</span>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">图片策略</div>
+                        <div class="setting-note">选择图片加载的优先级</div>
+                    </div>
+                    <div class="font-size-options">
+                        <div class="font-size-option apple-click-animation" data-img="quality">优先清晰</div>
+                        <div class="font-size-option apple-click-animation" data-img="speed">优先速度</div>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">懒加载阈值</div>
+                        <div class="setting-note">设置图片懒加载的触发距离</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="lazyThresholdRange" min="0" max="2000" step="50" style="width:120px">
+                        <span class="range-value" id="lazyThresholdValue">300px</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- 维护工具 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-tools"></span>维护</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">一键恢复默认</div>
-                    <div class="setting-note">将所有设置恢复到初始状态</div>
+            <!-- 返回按钮行为 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-arrow-left"></span>返回按钮</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">自动隐藏灵敏度</div>
+                        <div class="setting-note">设置返回按钮自动隐藏的滚动距离</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="backHideSensitivityRange" min="0" max="600" step="20" style="width:120px">
+                        <span class="range-value" id="backHideSensitivityValue">100px</span>
+                    </div>
                 </div>
-                <button class="viewer-btn" id="resetSettingsBtn">恢复默认</button>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">停止滚动显示</div>
+                        <div class="setting-note">设置停止滚动后显示返回按钮的延迟时间</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="backHideDelayRange" min="100" max="5000" step="100" style="width:120px">
+                        <span class="range-value" id="backHideDelayValue">1000ms</span>
+                    </div>
+                </div>
             </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">清理本地缓存</div>
-                    <div class="setting-note">清除浏览器本地存储的所有数据</div>
-                </div>
-                <button class="viewer-btn" id="clearCacheBtn">清理缓存</button>
+            <!-- 隐私设置 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-shield-lock"></span>隐私</h3>
+                <a href="https://ly-chen04.github.io/HXY-Memo-EULA/" class="settings-link apple-click-animation" id="eulaLink">
+                    EULA与隐私政策
+                    <span class="mdi mdi-chevron-right" style="float: right;"></span>
+                </a>
+                <a href="#" class="settings-link apple-click-animation" id="privacyLink">
+                    用户使用协议
+                    <span class="mdi mdi-chevron-right" style="float: right;"></span>
+                </a>
             </div>
-        </div>
-        <!-- 隐私设置 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-shield-lock"></span>隐私</h3>
-            <a href="https://ly-chen04.github.io/2024/09/05/EULA%E4%B8%8E%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96/" class="settings-link" id="eulaLink">
-                EULA与隐私政策
-                <span class="mdi mdi-chevron-right" style="float: right;"></span>
-            </a>
-            <a href="#" class="settings-link" id="privacyLink">
-                用户使用协议
-                <span class="mdi mdi-chevron-right" style="float: right;"></span>
-            </a>
-        </div>
-        <!-- 关于 -->
-        <div class="settings-section">
-            <h3><span class="mdi mdi-information"></span>关于</h3>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">版本号</div>
-                    <div class="setting-note">当前网站发行版本</div>
+            <!-- 关于 -->
+            <div class="settings-section">
+                <h3><span class="mdi mdi-information"></span>关于</h3>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">版本号</div>
+                        <div class="setting-note">当前网站发行版本</div>
+                    </div>
+                    <span class="version-info apple-click-animation" id="versionNumber">Public_1.0.0</span>
                 </div>
-                <span class="version-info" id="versionNumber">Public_1.0.0</span>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">数据库版本</div>
-                    <div class="setting-note">媒体数据更新时间</div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">数据库版本</div>
+                        <div class="setting-note">媒体数据更新时间</div>
+                    </div>
+                    <span class="version-info">202509121245-b5a</span>
                 </div>
-                <span class="version-info">202509121245-b5a</span>
-            </div>
-            <div class="settings-item">
-                <div class="setting-label">
-                    <div class="setting-name">数据中心</div>
-                    <div class="setting-note">本网站数据存储的地理位置</div>
+                <div class="settings-item">
+                    <div class="setting-label">
+                        <div class="setting-name">数据中心</div>
+                        <div class="setting-note">本网站数据存储的地理位置</div>
+                    </div>
+                    <span class="version-info">中国-香港特别行政区</span>
                 </div>
-                <span class="version-info">中国-香港特别行政区</span>
             </div>
         </div>
     </div>
@@ -1330,14 +1824,15 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
         }
         // 配置对象
         const config = {
-            theme: localStorage.getItem('theme') || 'light',
+            theme: localStorage.getItem('theme') || 'dark',
             primaryColor: localStorage.getItem('primaryColor') || 'white',
             fontSize: localStorage.getItem('fontSize') || 'medium',
-            fontFamily: localStorage.getItem('fontFamily') || 'system',
+            fontFamily: localStorage.getItem('fontFamily') || 'source-serif',
             keyboardControl: localStorage.getItem('keyboardControl') !== 'false',
             advancedMaterials: localStorage.getItem('advancedMaterials') !== 'false',
             highContrast: localStorage.getItem('highContrast') === 'true',
-            glassBlur: parseInt(localStorage.getItem('glassBlur') || '14', 10),
+            shineEffect: localStorage.getItem('shineEffect') || 'basic',
+            glassBlur: parseInt(localStorage.getItem('glassBlur') || '17', 10),
             glassSat: parseFloat(localStorage.getItem('glassSat') || '1.1'),
             videoMode: localStorage.getItem('videoMode') || 'manual',
             imageMode: localStorage.getItem('imageMode') || 'quality',
@@ -1477,10 +1972,10 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             document.body.setAttribute('data-theme-color', config.primaryColor);
             const colorMap = {
                 'white': '#ffffff',
-                'lightblue': '#a8d8ea',
-                'lightpink': '#ffb5b5',
-                'lightgreen': '#a8e6cf',
-                'lightpurple': '#d4a5ff'
+                'lightblue': '#007AFF',
+                'lightpink': '#FF2D92',
+                'lightgreen': '#34C759',
+                'lightpurple': '#AF52DE'
             };
             document.documentElement.style.setProperty('--primary-color', colorMap[config.primaryColor] || '#ffffff');
             document.querySelectorAll('.color-option').forEach(option => {
@@ -1515,6 +2010,16 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             document.body.classList.toggle('basic-materials', !config.advancedMaterials);
             // 高对比度
             document.body.classList.toggle('high-contrast', !!config.highContrast);
+            // 扫光效果
+            const mainTitle = document.getElementById('heroTitle');
+            if (mainTitle) {
+                mainTitle.classList.remove('theme-shine', 'advanced-shine');
+                if (config.shineEffect === 'theme') {
+                    mainTitle.classList.add('theme-shine');
+                } else if (config.shineEffect === 'advanced') {
+                    mainTitle.classList.add('advanced-shine');
+                }
+            }
             // 高级材质细粒度
             document.documentElement.style.setProperty('--glass-blur', `${config.glassBlur}px`);
             document.documentElement.style.setProperty('--glass-sat', `${config.glassSat}`);
@@ -1527,6 +2032,9 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             });
             document.querySelectorAll('[data-font]').forEach(opt => {
                 opt.classList.toggle('active', opt.getAttribute('data-font') === config.fontFamily);
+            });
+            document.querySelectorAll('[data-shine]').forEach(opt => {
+                opt.classList.toggle('active', opt.getAttribute('data-shine') === config.shineEffect);
             });
         }
         // 保存配置
@@ -1657,6 +2165,13 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                     applyConfig(); saveConfig();
                 });
             });
+            // 扫光效果
+            document.querySelectorAll('[data-shine]').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    config.shineEffect = opt.getAttribute('data-shine');
+                    applyConfig(); saveConfig();
+                });
+            });
             // 懒加载阈值
             const lazyRange = document.getElementById('lazyThresholdRange');
             const lazyValue = document.getElementById('lazyThresholdValue');
@@ -1695,7 +2210,7 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             }
             // 维护工具
             document.getElementById('resetSettingsBtn').addEventListener('click', () => {
-                const defaults = { theme:'light', primaryColor:'white', fontSize:'medium', fontFamily:'system', keyboardControl:true, advancedMaterials:true, highContrast:false, glassBlur:14, glassSat:1.1, videoMode:'manual', imageMode:'quality', lazyThreshold:300, backHideSensitivity:100, backHideDelay:1000 };
+                const defaults = { theme:'dark', primaryColor:'white', fontSize:'medium', fontFamily:'source-serif', keyboardControl:true, advancedMaterials:true, highContrast:false, shineEffect:'basic', glassBlur:17, glassSat:1.1, videoMode:'manual', imageMode:'quality', lazyThreshold:300, backHideSensitivity:100, backHideDelay:1000 };
                 Object.assign(config, defaults);
                 // 更新所有滑块显示值
                 blurValue.textContent = config.glassBlur;
@@ -1857,7 +2372,7 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                 cards = []; // 重置卡片数组
                 photoData.forEach((photo, index) => {
                     const card = document.createElement('div');
-                    card.className = 'photo-card';
+                    card.className = 'photo-card apple-click-animation';
                     card.style.setProperty('--card-rotation', `${(Math.random() - 0.5) * 2}deg`);
                     const mediaHtml = (photo.type === 'video')
                         ? `
@@ -1879,8 +2394,7 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                     // 添加点击事件
                     card.addEventListener('click', (e) => {
                         e.preventDefault();
-                        // 添加点击动画
-                        card.classList.add('clicked');                        
+                        // 苹果风格动画已经通过CSS和JavaScript处理
                         // 获取媒体在视口中的位置（用于共享元素过渡）
                         const mediaEl = card.querySelector('img,video');
                         const mediaRect = mediaEl ? mediaEl.getBoundingClientRect() : card.getBoundingClientRect();
@@ -1890,11 +2404,10 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                             width: mediaRect.width,
                             height: mediaRect.height
                         };                       
-                        // 延迟显示详情，等待点击动画完成
+                        // 延迟显示详情，等待苹果风格动画完成
                         setTimeout(() => {
                             showDetail(photo, cardPosition, mediaEl);
-                            card.classList.remove('clicked');
-                        }, 400);
+                        }, 200);
                     });                   
                     // 添加悬停效果
                     card.addEventListener('mouseenter', () => {
@@ -2031,11 +2544,25 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             // 初始化返回按钮行为
             let lastScrollTop = 0;
             let scrollTimeout;
-            window.addEventListener('scroll', () => {
+            let isScrolling = false;
+            // 优化滚动事件处理
+            function handleScroll() {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const sens = Math.max(0, config.backHideSensitivity || 100);
-                const goingDown = scrollTop > lastScrollTop && scrollTop > sens;
-                backButton.classList.toggle('hidden', goingDown);
+                const goingDown = scrollTop > lastScrollTop && scrollTop > sens;  
+                // 确保返回按钮始终在屏幕左上角
+                backButton.style.position = 'fixed';
+                backButton.style.top = '20px';
+                backButton.style.left = '20px';
+                backButton.style.zIndex = '101';
+                // 根据滚动方向和距离控制显示/隐藏
+                if (goingDown && !isScrolling) {
+                    backButton.classList.add('hidden');
+                    isScrolling = true;
+                } else if (!goingDown) {
+                    backButton.classList.remove('hidden');
+                    isScrolling = false;
+                } 
                 lastScrollTop = scrollTop;
                 // 清除之前的定时器
                 clearTimeout(scrollTimeout);
@@ -2043,7 +2570,17 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                 const stay = Math.max(100, config.backHideDelay || 1000);
                 scrollTimeout = setTimeout(() => {
                     backButton.classList.remove('hidden');
+                    isScrolling = false;
                 }, stay);
+            }
+            // 使用节流优化滚动性能
+            let scrollTimer;
+            window.addEventListener('scroll', () => {
+                if (scrollTimer) return;
+                scrollTimer = requestAnimationFrame(() => {
+                    handleScroll();
+                    scrollTimer = null;
+                });
             });
             // 关闭详情窗口
             document.getElementById('detailClose').addEventListener('click', () => {
@@ -2075,31 +2612,11 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             // 渲染照片
             renderPhotoCards();
         }
-        // 初始化进入按钮
+        // 初始化进入按钮（已优化为苹果风格动画）
         function initEnterButton() {
-            const enterButton = document.getElementById('enterButton');
-            const galleryView = document.getElementById('galleryView');
-            if (!enterButton) {
-                console.error('进入按钮元素未找到');
-                return;
-            }
-            if (!galleryView) {
-                console.error('图鉴视图元素未找到');
-                return;
-            }
-            console.log('正在初始化进入按钮...');
-            enterButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('进入按钮被点击');
-                // 添加按钮点击动画
-                enterButton.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    enterButton.style.transform = '';
-                    galleryView.classList.add('active');
-                    console.log('图鉴视图已激活');
-                }, 150);
-            });
-            console.log('进入按钮初始化完成');
+            // 这个函数现在由 optimizeEnterButtonAnimation 处理
+            // 保留此函数以避免破坏现有代码结构
+            console.log('进入按钮初始化已优化为苹果风格动画');
         }
         // 初始化首页标题逐字动画与周期扫光
         function initHeroTitle() {
@@ -2133,23 +2650,85 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
             // 周期扫光：每 7 秒触发一次
             const triggerShine = () => {
                 el.classList.remove('shine-active');
-                // 通过强制重排重置动画
-                void el.offsetWidth;
-                el.classList.add('shine-active');
-                // 在 1.6s 后移除辅助类，等待下次触发
-                setTimeout(() => el.classList.remove('shine-active'), 1600);
+                // 使用 requestAnimationFrame 确保动画重置
+                requestAnimationFrame(() => {
+                    el.classList.add('shine-active');
+                });
+                // 在 1.4s 后移除辅助类，等待下次触发
+                setTimeout(() => el.classList.remove('shine-active'), 1400);
             };
             // 初次入场 1 秒后执行扫光
             setTimeout(triggerShine, 1000);
             setInterval(triggerShine, 7000);
         }
+        // 苹果风格点击动画处理函数
+        function initAppleClickAnimations() {
+            // 为所有带有 apple-click-animation 类的元素添加涟漪效果
+            document.querySelectorAll('.apple-click-animation').forEach(element => {
+                // 只在 mousedown 时添加涟漪效果，不影响原有的 click 事件
+                element.addEventListener('mousedown', function(e) {
+                    // 立即创建涟漪效果，不等待点击完成
+                    this.classList.add('ripple');
+                });
+                element.addEventListener('mouseup', function(e) {
+                    // 移除涟漪效果类，准备下次点击
+                    setTimeout(() => {
+                        this.classList.remove('ripple');
+                    }, 400);
+                });
+                element.addEventListener('mouseleave', function(e) {
+                    // 鼠标离开时也移除涟漪效果
+                    setTimeout(() => {
+                        this.classList.remove('ripple');
+                    }, 200);
+                });
+            });
+        }
+        // 优化现有的进入按钮点击动画
+        function optimizeEnterButtonAnimation() {
+            const enterButton = document.getElementById('enterButton');
+            if (enterButton) {
+                // 移除原有的简单缩放动画，使用新的苹果风格动画
+                enterButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('进入按钮被点击');
+                    // 新的苹果风格动画已经通过CSS处理
+                    setTimeout(() => {
+                        const galleryView = document.getElementById('galleryView');
+                        if (galleryView) {
+                            galleryView.classList.add('active');
+                            console.log('图鉴视图已激活');
+                        }
+                    }, 150);
+                });
+            }
+        }
+        // 优化照片卡片的点击动画
+        function optimizePhotoCardAnimation() {
+            // 这个函数将在 initGalleryView 中被调用
+            // 为照片卡片添加苹果风格的点击动画
+            const originalRenderPhotoCards = window.renderPhotoCards;
+            if (originalRenderPhotoCards) {
+                window.renderPhotoCards = function() {
+                    originalRenderPhotoCards();
+                    // 为所有照片卡片添加苹果风格动画类
+                    document.querySelectorAll('.photo-card').forEach(card => {
+                        if (!card.classList.contains('apple-click-animation')) {
+                            card.classList.add('apple-click-animation');
+                        }
+                    });
+                };
+            }
+        }
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('页面DOM加载完成，开始初始化...');
             try {
-                // 先绑定与媒体无关的交互，避免等待期间“无响应”
-                console.log('初始化进入按钮...');
-                initEnterButton();
+                // 先绑定与媒体无关的交互，避免等待期间"无响应"
+                console.log('初始化苹果风格点击动画...');
+                initAppleClickAnimations();
+                console.log('优化进入按钮动画...');
+                optimizeEnterButtonAnimation();
                 console.log('初始化设置面板...');
                 initSettingsPanel();
                 // 异步加载媒体，加载完后再初始化依赖媒体的数据
@@ -2164,7 +2743,9 @@ time_is_widget.init({China_z43d:{template:"TIME<br>DATE<br>SUN", date_format:"ye
                 console.log('初始化首页标题动画...');
                 initHeroTitle();
                 console.log('初始化图鉴视图...');
-                initGalleryView();               
+                initGalleryView();
+                console.log('优化照片卡片动画...');
+                optimizePhotoCardAnimation();
                 console.log('所有模块初始化完成');
                 // 添加页面加载动画
                 document.body.style.opacity = '0';
